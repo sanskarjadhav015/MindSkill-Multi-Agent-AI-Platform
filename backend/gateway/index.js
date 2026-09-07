@@ -17,10 +17,10 @@ const app = express();
 
 /**
  * ============================================================================
- * NOVA MIND API GATEWAY SERVICE
+ * MINDSKILL API GATEWAY SERVICE
  * ============================================================================
  * Role:
- * - Single public-facing ingress / entry point for the NovaMind microservices.
+ * - Single public-facing ingress / entry point for the MindSkill microservices.
  * - Handles CORS with frontend credentials support.
  * - Parses HTTP-only cookies for distributed session verification via Redis.
  * - Injects authenticated user context (x-user-id) to downstream services.

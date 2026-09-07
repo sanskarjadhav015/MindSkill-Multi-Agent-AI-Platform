@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Coins, LogOut, MessageSquare, Plus, Sparkles, User2, X, Menu } from "lucide-react";
+import { Coins, LogOut, MessageSquare, Plus, Sparkles, User2, X } from "lucide-react";
 import { getConversations } from "../features/getConversations";
 import { useDispatch, useSelector } from "react-redux";
 import { setConversations, setSelectedConversation } from "../redux/conversationslice";
 import { setMessages, setArtifacts } from "../redux/messageSlice";
 import logOut from "../features/logOut";
 import { setUserdata } from "../redux/userSlice";
+import Logo from "./Logo";
 import BillingDrawer from "./BillingDrawer";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -51,60 +52,60 @@ function SideBar() {
   };
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-[#fafafa]">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-4" style={{ borderBottom: "1px solid #e8e6e1" }}>
-        <div className="flex items-center gap-2.5">
-          <motion.div
-            className="logo-float w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "#8b5cf6" }}
-          >
-            <Sparkles size={15} color="white" />
-          </motion.div>
-          <div>
-            <span className="text-[15px] font-bold logo-text">NovaMind</span>
-            {userData?.plan && (
-              <span className="ml-2 text-[9px] font-semibold px-1.5 py-0.5 rounded-full uppercase tracking-wide"
-                style={{ background: "#f3f0ff", color: "#8b5cf6", border: "1px solid #ddd6fe" }}>
-                {userData.plan}
-              </span>
-            )}
-          </div>
+      <div className="flex items-center justify-between px-4 py-3.5 border-b border-black/[0.08]">
+        <div className="flex items-center gap-2">
+          <Logo iconSize={36} showSubtitle={true} variant="light" />
+          {userData?.plan && (
+            <span className="ml-1 text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider bg-amber-500/10 text-amber-600 border border-amber-500/20">
+              {userData.plan}
+            </span>
+          )}
         </div>
         {/* Close button on mobile */}
-        <button onClick={() => setOpen(false)} className="lg:hidden p-1 rounded-lg cursor-pointer border-none"
-          style={{ background: "transparent", color: "#6b6560" }}>
+        <button
+          onClick={() => setOpen(false)}
+          className="lg:hidden p-1 rounded-lg cursor-pointer border-none bg-transparent text-zinc-500 hover:text-[#0a0a0a]"
+        >
           <X size={18} />
         </button>
       </div>
 
-      {/* New Chat */}
+      {/* New Chat Button: High-Impact CTA */}
       <div className="px-3 py-3">
         <motion.button
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
+          whileHover={{ scale: 1.015 }}
+          whileTap={{ scale: 0.985 }}
           onClick={newChat}
-          className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold cursor-pointer border-none transition-all"
-          style={{ background: "#8b5cf6", color: "#fff" }}
+          className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold cursor-pointer border-none transition-all bg-[#000000] text-white hover:bg-[#1a1a1a] shadow-md hover:shadow-lg"
         >
           <Plus size={15} />
-          New Chat
+          <span>New Chat</span>
         </motion.button>
       </div>
 
       {/* Recents label */}
-      <div className="px-4 pt-1 pb-1.5">
-        <span className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#9c9590" }}>
+      <div className="px-4 pt-1 pb-1.5 flex items-center justify-between">
+        <span className="text-[10.5px] font-bold uppercase tracking-wider text-zinc-400">
           Recent Chats
         </span>
+        {conversations?.length > 0 && (
+          <span className="text-[10px] text-zinc-400 font-mono">
+            {conversations.length}
+          </span>
+        )}
       </div>
 
       {/* Conversations */}
-      <div className="flex-1 overflow-y-auto px-2 pb-2 space-y-0.5">
+      <div className="flex-1 overflow-y-auto px-2 pb-2 space-y-1 [scrollbar-width:none]">
         {(!conversations || conversations.length === 0) ? (
-          <div className="py-8 text-center">
-            <MessageSquare size={20} className="mx-auto mb-2" style={{ color: "#c8c4bc" }} />
-            <p className="text-xs" style={{ color: "#9c9590" }}>No chats yet</p>
+          <div className="py-10 text-center">
+            <div className="w-9 h-9 mx-auto mb-2 rounded-xl bg-black/[0.03] border border-black/[0.06] flex items-center justify-center">
+              <MessageSquare size={16} className="text-zinc-400" />
+            </div>
+            <p className="text-xs text-zinc-500 font-medium">No chats yet</p>
+            <p className="text-[11px] text-zinc-400 mt-0.5">Start a fresh conversation</p>
           </div>
         ) : (
           conversations.map((conv, i) => {
@@ -113,53 +114,72 @@ function SideBar() {
               <button
                 key={conv?._id || i}
                 onClick={() => selectConv(conv)}
-                className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all cursor-pointer border-none text-sm"
-                style={isActive
-                  ? { background: "#f3f0ff", color: "#5b21b6", borderLeft: "3px solid #8b5cf6" }
-                  : { background: "transparent", color: "#4a4844", borderLeft: "3px solid transparent" }}
+                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all cursor-pointer border-none text-xs font-medium ${
+                  isActive
+                    ? "bg-purple-500/10 text-purple-700 font-semibold border-l-2 border-[#7c3aed]"
+                    : "bg-transparent text-zinc-600 hover:text-[#0a0a0a] hover:bg-black/[0.03]"
+                }`}
               >
-                <MessageSquare size={13} style={{ color: isActive ? "#8b5cf6" : "#b8b4ac", flexShrink: 0 }} />
-                <span className="truncate text-[13px]">{conv?.title || "New Chat"}</span>
+                <MessageSquare
+                  size={14}
+                  className={`shrink-0 ${isActive ? "text-[#7c3aed]" : "text-zinc-400"}`}
+                />
+                <span className="truncate">{conv?.title || "New Chat"}</span>
               </button>
             );
           })
         )}
       </div>
 
-      {/* Footer */}
-      <div className="px-3 py-3" style={{ borderTop: "1px solid #e8e6e1" }}>
+      {/* Footer: Clean Light Card for User Profile */}
+      <div className="p-3 border-t border-black/[0.08]">
         {userData ? (
-          <div className="flex items-center gap-2.5 p-2.5 rounded-xl" style={{ background: "#f3f2ef" }}>
+          <div className="flex items-center gap-2.5 p-2.5 rounded-2xl bg-white border border-black/10 shadow-sm">
             <div className="shrink-0">
-              {userData?.avatar && !imageError
-                ? <img src={userData.avatar} alt="Avatar" onError={() => setImageError(true)}
-                    className="w-8 h-8 rounded-xl object-cover" style={{ border: "1.5px solid #e8e6e1" }} />
-                : <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: "#e8e6e1" }}>
-                    <User2 size={14} style={{ color: "#6b6560" }} />
-                  </div>
-              }
+              {userData?.avatar && !imageError ? (
+                <img
+                  src={userData.avatar}
+                  alt="Avatar"
+                  onError={() => setImageError(true)}
+                  className="w-8 h-8 rounded-xl object-cover border border-black/10"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-[#7c3aed]">
+                  <User2 size={15} />
+                </div>
+              )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[12.5px] font-semibold truncate" style={{ color: "#1a1918" }}>{userData?.name || "User"}</p>
-              <p className="text-[11px] flex items-center gap-1" style={{ color: "#9c9590" }}>
-                <Coins size={10} style={{ color: "#d97706" }} />
-                <span style={{ color: "#d97706", fontWeight: 600 }}>{userData?.credits ?? 0}</span>
-                <span> credits</span>
+              <p className="text-[12.5px] font-bold truncate text-[#0a0a0a]">
+                {userData?.name || "User"}
+              </p>
+              <p className="text-[11px] flex items-center gap-1 text-zinc-500">
+                <Coins size={11} className="text-[#eab308]" />
+                <span className="text-[#eab308] font-bold">{userData?.credits ?? 0}</span>
+                <span>credits</span>
               </p>
             </div>
-            <div className="flex gap-0.5">
-              <button onClick={() => setShowBilling(true)} title="Billing" className="p-1.5 rounded-lg cursor-pointer border-none transition-all"
-                style={{ background: "transparent", color: "#d97706" }}>
-                <Coins size={13} />
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setShowBilling(true)}
+                title="Billing & Upgrade"
+                className="p-1.5 rounded-lg cursor-pointer border-none bg-amber-500/10 hover:bg-amber-500/20 text-[#eab308] transition-all"
+              >
+                <Coins size={14} />
               </button>
-              <button onClick={handleLogout} title="Logout" className="p-1.5 rounded-lg cursor-pointer border-none transition-all"
-                style={{ background: "transparent", color: "#9c9590" }}>
-                <LogOut size={13} />
+              <button
+                onClick={handleLogout}
+                title="Logout"
+                className="p-1.5 rounded-lg cursor-pointer border-none bg-transparent hover:bg-black/[0.04] text-zinc-400 hover:text-zinc-700 transition-all"
+              >
+                <LogOut size={14} />
               </button>
             </div>
           </div>
         ) : (
-          <p className="text-xs text-center" style={{ color: "#9c9590" }}>Not signed in</p>
+          <div className="text-center py-2">
+            <p className="text-xs text-zinc-500">Not signed in</p>
+          </div>
         )}
       </div>
     </div>
@@ -168,33 +188,28 @@ function SideBar() {
   return (
     <>
       {/* Desktop static sidebar */}
-      <aside className="hidden lg:flex flex-col w-[260px] h-screen shrink-0"
-        style={{ background: "#f3f2ef", borderRight: "1px solid #e8e6e1" }}>
+      <aside className="hidden lg:flex flex-col w-[260px] h-screen shrink-0 border-r border-black/[0.08] bg-[#fafafa]">
         <SidebarContent />
         <BillingDrawer open={showBilling} onClose={() => setShowBilling(false)} />
       </aside>
 
-      {/* Mobile hamburger button — shown in Nav, but we expose a global toggle here */}
+      {/* Mobile drawer */}
       <AnimatePresence>
         {open && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 lg:hidden"
-              style={{ background: "rgba(0,0,0,0.35)" }}
+              className="fixed inset-0 z-40 lg:hidden bg-black/40 backdrop-blur-sm"
               onClick={() => setOpen(false)}
             />
-            {/* Drawer */}
             <motion.div
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed inset-y-0 left-0 z-50 w-[280px] flex flex-col lg:hidden"
-              style={{ background: "#f3f2ef", borderRight: "1px solid #e8e6e1" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              className="fixed inset-y-0 left-0 z-50 w-[280px] flex flex-col lg:hidden border-r border-black/[0.08] bg-[#fafafa] shadow-2xl"
             >
               <SidebarContent />
             </motion.div>
@@ -202,7 +217,6 @@ function SideBar() {
         )}
       </AnimatePresence>
 
-      {/* Expose toggle via custom event so Nav can open it */}
       <div id="sidebar-toggle-ref" data-open={open} style={{ display: "none" }} />
       <BillingDrawer open={showBilling} onClose={() => setShowBilling(false)} />
 

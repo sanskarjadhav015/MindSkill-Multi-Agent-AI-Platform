@@ -1,20 +1,25 @@
 # Dependencies
 node_modules/
+**/node_modules/
 package-lock.json
 
-# Environment Variables & Private Credentials
+# Environment Variables & Private Credentials (NEVER COMMIT)
 .env
-.env.local
-.env.development
-.env.production
+.env.*
 *.env
+**/.env
+**/.env.*
 serviceAccountKey.json
+**/serviceAccountKey.json
 *.pem
 *.key
+*.cert
 
 # Build outputs
 dist/
+**/dist/
 build/
+**/build/
 .cache/
 
 # Runtime, Temporary & Scratch test files
@@ -22,12 +27,15 @@ temp/
 **/temp/
 *.tmp
 *.temp
-test_*.mjs
-test_*.js
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+test_*.mjs
+test_*.js
+*.test.js
+*.test.mjs
+test-*.pdf
 
 # System & Editor files
 .DS_Store

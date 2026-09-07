@@ -10,10 +10,11 @@ import { setUserdata } from "../redux/userSlice";
  * ============================================================================
  * BILLING & SUBSCRIPTION DRAWER COMPONENT (`BillingDrawer.jsx`)
  * ============================================================================
- * Features:
- * - Displays active user plan and animated credit balance progress bar.
- * - Pricing cards for Starter (₹199) and Pro (₹499) tiers.
- * - Integrates Razorpay checkout modal with HMAC-SHA256 server verification.
+ * Master Bento Dark Palette:
+ * - Bento Black (#0E0E12), Bento Surface (#16161A), Border Dark (border-white/10)
+ * - Amber/Gold (#EAB308) credit badges & glowing balance indicators
+ * - Electric Emerald (#10B981) perks checklist
+ * - AI Purple (#7C3AED) high-impact checkout CTA
  * ============================================================================
  */
 function BillingDrawer({ open, onClose }) {
@@ -36,7 +37,7 @@ function BillingDrawer({ open, onClose }) {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: data?.order?.amount,
         currency: data?.order?.currency,
-        name: "NovaMind",
+        name: "MindSkill",
         description: `${data?.plan?.name || plan} Plan`,
         order_id: data?.order?.id,
 
@@ -102,186 +103,191 @@ function BillingDrawer({ open, onClose }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md"
           />
 
-          {/* Slide-over Drawer */}
+          {/* Slide-over Drawer: Bento Black */}
           <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className="fixed right-0 top-0 z-50 flex h-screen w-full max-w-[460px] flex-col border-l border-white/[0.08] bg-[#0c0e15] shadow-2xl"
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed right-0 top-0 z-50 flex h-screen w-full max-w-[460px] flex-col border-l border-white/10 bg-[#0e0e12] text-white shadow-2xl"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/[0.08] p-5 shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-                  <Crown size={16} />
+            {/* Header: Bento Surface */}
+            <div className="flex items-center justify-between border-b border-white/10 p-5 shrink-0 bg-[#16161a]">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-[#eab308] glow-gold">
+                  <Crown size={18} />
                 </div>
                 <div>
-                  <h2 className="text-[15px] font-bold text-white tracking-tight">
-                    Billing & Credits
+                  <h2 className="text-[15px] font-bold text-white tracking-tight flex items-center gap-2">
+                    <span>Billing & Credits</span>
+                    <span className="text-[10px] uppercase font-bold tracking-widest bg-amber-500/15 text-[#eab308] border border-amber-500/30 px-2 py-0.5 rounded-full">
+                      PRO
+                    </span>
                   </h2>
-                  <p className="text-xs text-slate-400">
-                    Manage your balance and plan tier
+                  <p className="text-xs text-zinc-400">
+                    Manage balance, credits & upgrades
                   </p>
                 </div>
               </div>
 
               <button
                 onClick={onClose}
-                className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-white transition-colors cursor-pointer border-none"
+                className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-400 hover:text-white transition-colors cursor-pointer border-none"
               >
                 <X size={16} />
               </button>
             </div>
 
             {/* Scrollable Body */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex-1 overflow-y-auto p-5 space-y-5 [scrollbar-width:none]">
               
-              {/* Current Status Card */}
-              <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4.5">
-                <div className="flex items-center justify-between mb-3">
+              {/* Current Status: Dark Bento Card */}
+              <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0e0e11] via-[#16161a] to-[#0e0e11] p-5 shadow-xl">
+                <div className="flex items-center justify-between mb-4">
                   <div>
-                    <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                      Current Plan
+                    <span className="text-[10.5px] font-bold text-zinc-400 uppercase tracking-wider">
+                      Current Subscription
                     </span>
-                    <h3 className="text-lg font-bold capitalize text-white flex items-center gap-2 mt-0.5">
-                      <span>{userData?.plan || "Free"}</span>
-                      <span className="text-[10.5px] font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full uppercase">
+                    <h3 className="text-xl font-extrabold capitalize text-white flex items-center gap-2 mt-0.5">
+                      <span>{userData?.plan || "Free"} Tier</span>
+                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full uppercase flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
                         Active
                       </span>
                     </h3>
                   </div>
 
-                  <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                  <div className="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-[#7c3aed] glow-purple">
                     <Sparkles size={18} />
                   </div>
                 </div>
 
-                {/* Meter */}
-                <div className="space-y-1.5 pt-2 border-t border-white/[0.04]">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-slate-400 flex items-center gap-1">
-                      <Coins size={12} className="text-amber-400" />
-                      Remaining Credits
+                {/* Meter with Gold / Amber Accent */}
+                <div className="space-y-2 pt-3 border-t border-white/[0.08]">
+                  <div className="flex justify-between text-xs font-medium">
+                    <span className="text-zinc-400 flex items-center gap-1.5">
+                      <Coins size={13} className="text-[#eab308]" />
+                      <span>Available Credits</span>
                     </span>
-                    <span className="font-semibold text-white">
-                      {currentCredits} <span className="text-slate-500">/ {totalCredits}</span>
+                    <span className="font-bold text-white">
+                      <span className="text-[#eab308]">{currentCredits}</span>{" "}
+                      <span className="text-zinc-500 font-normal">/ {totalCredits}</span>
                     </span>
                   </div>
 
-                  <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
+                  <div className="h-2.5 overflow-hidden rounded-full bg-white/[0.07] border border-white/[0.04]">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all duration-500"
+                      className="h-full rounded-full bg-gradient-to-r from-[#7c3aed] to-[#eab308] transition-all duration-500"
                       style={{ width: `${creditPercentage}%` }}
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Pricing Cards */}
+              {/* Pricing Plans */}
               <div className="space-y-4">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                  Upgrade Plans
+                <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+                  Upgrade Tier
                 </h4>
 
                 {/* Starter Plan */}
-                <div className="relative rounded-2xl border border-white/[0.08] bg-white/[0.02] hover:border-white/[0.12] p-5 transition-all">
+                <div className="relative rounded-3xl border border-white/10 bg-[#16161a] hover:border-white/20 p-5 transition-all">
                   <div className="flex justify-between items-start">
                     <div>
                       <h4 className="text-base font-bold text-white">
                         Starter Plan
                       </h4>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        Ideal for casual building and queries
+                      <p className="text-xs text-zinc-400 mt-0.5">
+                        Perfect for lightweight tasks & fast prototyping
                       </p>
                     </div>
                     <div className="text-right">
-                      <span className="text-xl font-bold text-indigo-300">
+                      <span className="text-2xl font-extrabold text-white">
                         ₹199
                       </span>
-                      <span className="text-[11px] text-slate-500 block">one-time</span>
+                      <span className="text-[10px] text-zinc-400 block font-medium">one-time payment</span>
                     </div>
                   </div>
 
-                  <div className="mt-4 space-y-2 text-xs text-slate-300 border-t border-white/[0.04] pt-3">
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-emerald-400 shrink-0" />
-                      <span><strong>500</strong> AI Generation Credits</span>
+                  <div className="mt-4 space-y-2 text-xs text-zinc-300 border-t border-white/[0.08] pt-3.5">
+                    <div className="flex items-center gap-2.5">
+                      <Check size={14} className="text-[#10b981] shrink-0" />
+                      <span><strong>500</strong> Autonomous Generation Credits</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-emerald-400 shrink-0" />
-                      <span>Access to Coding, Vision & PDF Agents</span>
+                    <div className="flex items-center gap-2.5">
+                      <Check size={14} className="text-[#10b981] shrink-0" />
+                      <span>Full access to Coding, Vision & PDF Agents</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-emerald-400 shrink-0" />
+                    <div className="flex items-center gap-2.5">
+                      <Check size={14} className="text-[#10b981] shrink-0" />
                       <span>Live Sandbox & Monaco Code Editor</span>
                     </div>
                   </div>
 
                   <button
                     disabled={upgradingPlan === "starter"}
-                    className="mt-4.5 w-full flex items-center justify-center gap-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] py-2.5 text-xs font-semibold text-white transition-all cursor-pointer disabled:opacity-50"
+                    className="mt-5 w-full flex items-center justify-center gap-2 rounded-xl bg-white/[0.08] hover:bg-white/[0.12] border border-white/10 py-2.5 text-xs font-bold text-white transition-all cursor-pointer disabled:opacity-50"
                     onClick={() => handleUpgrade("starter")}
                   >
                     {upgradingPlan === "starter" ? (
-                      <div className="w-3.5 h-3.5 border-2 border-slate-400 border-t-white rounded-full animate-spin" />
+                      <div className="w-3.5 h-3.5 border-2 border-zinc-400 border-t-white rounded-full animate-spin" />
                     ) : (
                       <span>Upgrade to Starter</span>
                     )}
                   </button>
                 </div>
 
-                {/* Pro Plan */}
-                <div className="relative rounded-2xl border border-indigo-500/40 bg-gradient-to-b from-indigo-500/[0.08] to-violet-500/[0.03] p-5 shadow-lg shadow-indigo-500/10">
-                  <div className="absolute -top-2.5 right-4 rounded-full bg-gradient-to-r from-indigo-500 to-violet-600 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm">
-                    Most Popular
+                {/* Pro Plan: Dark Bento Card with Glow */}
+                <div className="relative rounded-3xl border border-purple-500/30 bg-gradient-to-br from-[#0e0e11] via-[#16161a] to-[#0e0e11] p-5 shadow-2xl glow-purple">
+                  <div className="absolute -top-3 right-5 rounded-full bg-gradient-to-r from-[#7c3aed] to-[#6366f1] px-3 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-white shadow-md">
+                    Recommended
                   </div>
 
                   <div className="flex justify-between items-start">
                     <div>
                       <h4 className="text-base font-bold text-white flex items-center gap-1.5">
-                        <span>Pro Plan</span>
-                        <Zap size={14} className="text-amber-400 fill-amber-400" />
+                        <span>Pro Power</span>
+                        <Zap size={14} className="text-[#eab308] fill-[#eab308]" />
                       </h4>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        For heavy workflows & power creators
+                      <p className="text-xs text-zinc-400 mt-0.5">
+                        Unlimited creativity for heavy creators & developers
                       </p>
                     </div>
                     <div className="text-right">
-                      <span className="text-xl font-bold text-indigo-300">
+                      <span className="text-2xl font-extrabold text-[#7c3aed]">
                         ₹499
                       </span>
-                      <span className="text-[11px] text-slate-500 block">one-time</span>
+                      <span className="text-[10px] text-zinc-400 block font-medium">one-time payment</span>
                     </div>
                   </div>
 
-                  <div className="mt-4 space-y-2 text-xs text-slate-300 border-t border-white/[0.06] pt-3">
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-emerald-400 shrink-0" />
-                      <span><strong>1000</strong> AI Generation Credits</span>
+                  <div className="mt-4 space-y-2 text-xs text-zinc-300 border-t border-white/[0.08] pt-3.5">
+                    <div className="flex items-center gap-2.5">
+                      <Check size={14} className="text-[#10b981] shrink-0" />
+                      <span><strong>1000</strong> Autonomous Generation Credits</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-emerald-400 shrink-0" />
-                      <span>All 8 Autonomous Agents Unlocked</span>
+                    <div className="flex items-center gap-2.5">
+                      <Check size={14} className="text-[#10b981] shrink-0" />
+                      <span>All 8 Specialized AI Agents Unlocked</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check size={13} className="text-emerald-400 shrink-0" />
-                      <span>Priority Vector RAG & Fast Compute</span>
+                    <div className="flex items-center gap-2.5">
+                      <Check size={14} className="text-[#10b981] shrink-0" />
+                      <span>High priority vector RAG computation</span>
                     </div>
                   </div>
 
                   <button
                     disabled={upgradingPlan === "pro"}
-                    className="mt-4.5 w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 hover:opacity-95 active:scale-[0.99] py-2.5 text-xs font-semibold text-white transition-all cursor-pointer shadow-md shadow-indigo-500/25 border-none disabled:opacity-50"
+                    className="mt-5 w-full flex items-center justify-center gap-2 rounded-xl bg-[#7c3aed] hover:bg-[#6d28d9] py-3 text-xs font-bold text-white transition-all cursor-pointer shadow-lg shadow-purple-500/30 border-none disabled:opacity-50"
                     onClick={() => handleUpgrade("pro")}
                   >
                     {upgradingPlan === "pro" ? (
-                      <div className="w-3.5 h-3.5 border-2 border-slate-300 border-t-white rounded-full animate-spin" />
+                      <div className="w-3.5 h-3.5 border-2 border-white/50 border-t-white rounded-full animate-spin" />
                     ) : (
-                      <span>Upgrade to Pro</span>
+                      <span>Upgrade to Pro Now</span>
                     )}
                   </button>
                 </div>

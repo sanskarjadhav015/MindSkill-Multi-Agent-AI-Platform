@@ -15,6 +15,7 @@ import Editor from "@monaco-editor/react";
  * - Real-time HTML/CSS/JS sandbox with automated CDN injection (Tailwind, FontAwesome).
  * - Monaco Editor with vs-light theme and multi-file tab switching.
  * - Live sandbox reload button, fullscreen preview mode, and file download.
+ * - Master color palette with Canvas Light #FAFAFA, Surface White, and AI Purple #7C3AED.
  * ============================================================================
  */
 function Artifact() {
@@ -53,7 +54,7 @@ function Artifact() {
    * Constructs an isolated, rich HTML document with embedded Tailwind CDN & FontAwesome
    */
   const buildPreviewDoc = () => {
-    let rawHtml = htmlFile?.content || "<div style='padding:20px;'>No HTML file found.</div>";
+    let rawHtml = htmlFile?.content || "<div style='padding:20px; font-family:sans-serif;'>No HTML file found.</div>";
     const rawCss = cssFile?.content || "";
     const rawJs = jsFile?.content || "";
 
@@ -156,26 +157,26 @@ function Artifact() {
       initial={{ width: 460 }}
       animate={{ width: panelWidth }}
       transition={{ duration: 0.25, ease: easeInOut }}
-      className={`hidden lg:flex h-full overflow-hidden shrink-0 z-30 ${fullscreen ? "fixed inset-0" : "relative"}`}
+      className={`hidden lg:flex h-full overflow-hidden shrink-0 z-30 ${
+        fullscreen ? "fixed inset-0" : "relative"
+      }`}
     >
       {!collapsed ? (
-        <div className="flex flex-col h-full w-full" style={{ background: "#fff", borderLeft: "1px solid #e8e6e1" }}>
+        <div className="flex flex-col h-full w-full bg-white border-l border-black/10">
           {/* Header Bar */}
-          <div className="h-14 px-3.5 flex items-center justify-between gap-2 shrink-0"
-            style={{ borderBottom: "1px solid #e8e6e1", background: "#f9f8f6" }}>
+          <div className="h-14 px-3.5 flex items-center justify-between gap-2 shrink-0 bg-[#fafafa] border-b border-black/10">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <button
                 onClick={() => setCollapsed(true)}
                 title="Collapse Panel"
-                className="flex items-center justify-center w-7 h-7 rounded-lg cursor-pointer border-none transition-all shrink-0"
-                style={{ background: "transparent", color: "#9c9590" }}
+                className="flex items-center justify-center w-7 h-7 rounded-lg cursor-pointer border-none transition-all shrink-0 bg-transparent hover:bg-black/[0.04] text-zinc-500 hover:text-[#0a0a0a]"
               >
                 <PanelRightClose size={15} />
               </button>
-              <div className="w-5 h-5 rounded-md flex items-center justify-center shrink-0" style={{ background: "#f3f0ff" }}>
-                <Code2 size={11} style={{ color: "#8b5cf6" }} />
+              <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 bg-purple-500/10 border border-purple-500/20 text-[#7c3aed]">
+                <Code2 size={13} />
               </div>
-              <span className="text-[13px] font-semibold truncate" style={{ color: "#1a1918" }}>
+              <span className="text-[13px] font-bold truncate text-[#0a0a0a] tracking-tight">
                 {artifact?.title || "Generated Application"}
               </span>
             </div>
@@ -186,20 +187,30 @@ function Artifact() {
               <button
                 onClick={handleCopy}
                 title="Copy current file"
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium cursor-pointer border-none transition-all"
-                style={copied
-                  ? { background: "#f0fdf4", color: "#15803d", border: "1px solid #86efac" }
-                  : { background: "#fff", color: "#6b6560", border: "1px solid #e8e6e1" }}
+                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold cursor-pointer border transition-all ${
+                  copied
+                    ? "bg-emerald-500/15 text-[#10b981] border-emerald-500/30"
+                    : "bg-white text-zinc-600 hover:text-[#0a0a0a] border-black/10 shadow-sm"
+                }`}
               >
-                {copied ? <><Check size={11} /><span>Copied</span></> : <><Copy size={11} /><span>Copy</span></>}
+                {copied ? (
+                  <>
+                    <Check size={11} className="text-[#10b981]" />
+                    <span>Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy size={11} />
+                    <span>Copy</span>
+                  </>
+                )}
               </button>
 
               {/* Download single file */}
               <button
                 onClick={handleDownload}
                 title="Download file"
-                className="flex items-center justify-center w-7 h-7 rounded-lg cursor-pointer border-none transition-all"
-                style={{ background: "#fff", color: "#6b6560", border: "1px solid #e8e6e1" }}
+                className="flex items-center justify-center w-7 h-7 rounded-lg cursor-pointer border-none transition-all bg-white hover:bg-zinc-50 text-zinc-600 border border-black/10 shadow-sm"
               >
                 <Download size={12} />
               </button>
@@ -208,32 +219,35 @@ function Artifact() {
               <button
                 onClick={() => setFullscreen(!fullscreen)}
                 title={fullscreen ? "Exit Fullscreen" : "Fullscreen"}
-                className="flex items-center justify-center w-7 h-7 rounded-lg cursor-pointer border-none transition-all"
-                style={{ background: "#fff", color: "#6b6560", border: "1px solid #e8e6e1" }}
+                className="flex items-center justify-center w-7 h-7 rounded-lg cursor-pointer border-none transition-all bg-white hover:bg-zinc-50 text-zinc-600 border border-black/10 shadow-sm"
               >
                 {fullscreen ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
               </button>
 
-              {/* Code vs Preview Toggle */}
+              {/* Code vs Preview Segment Toggle */}
               {isWebProject && (
-                <div className="flex items-center p-0.5 rounded-lg ml-1" style={{ background: "#f3f2ef", border: "1px solid #e8e6e1" }}>
+                <div className="flex items-center p-0.5 rounded-lg ml-1 bg-black/[0.04] border border-black/[0.06]">
                   <button
                     onClick={() => setTab("code")}
-                    className="flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium cursor-pointer border-none transition-all"
-                    style={tab === "code"
-                      ? { background: "#fff", color: "#1a1918", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }
-                      : { background: "transparent", color: "#9c9590" }}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold cursor-pointer border-none transition-all ${
+                      tab === "code"
+                        ? "bg-white text-[#0a0a0a] shadow-sm"
+                        : "bg-transparent text-zinc-500 hover:text-[#0a0a0a]"
+                    }`}
                   >
-                    <Code2Icon size={11} />Code
+                    <Code2Icon size={11} />
+                    <span>Code</span>
                   </button>
                   <button
                     onClick={() => setTab("preview")}
-                    className="flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium cursor-pointer border-none transition-all"
-                    style={tab === "preview"
-                      ? { background: "#fff", color: "#8b5cf6", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }
-                      : { background: "transparent", color: "#9c9590" }}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold cursor-pointer border-none transition-all ${
+                      tab === "preview"
+                        ? "bg-white text-[#7c3aed] shadow-sm"
+                        : "bg-transparent text-zinc-500 hover:text-[#0a0a0a]"
+                    }`}
                   >
-                    <Eye size={11} />Preview
+                    <Eye size={11} />
+                    <span>Preview</span>
                   </button>
                 </div>
               )}
@@ -242,19 +256,22 @@ function Artifact() {
 
           {/* File Tabs (in Code Mode) */}
           {tab === "code" && (
-            <div className="flex items-center gap-1 px-3 py-2 shrink-0 overflow-x-auto"
-              style={{ background: "#f9f8f6", borderBottom: "1px solid #e8e6e1", scrollbarWidth: "none" }}>
+            <div className="flex items-center gap-1 px-3 py-2 shrink-0 overflow-x-auto bg-[#fafafa] border-b border-black/10 [scrollbar-width:none]">
               {files.map((f, i) => (
                 <button
                   key={i}
                   onClick={() => setActiveFile(i)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono cursor-pointer border-none shrink-0 transition-all"
-                  style={activeFile === i
-                    ? { background: "#fff", color: "#1a1918", border: "1px solid #e8e6e1", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }
-                    : { background: "transparent", color: "#9c9590", border: "1px solid transparent" }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono cursor-pointer border transition-all shrink-0 ${
+                    activeFile === i
+                      ? "bg-white text-[#0a0a0a] border-black/10 shadow-sm font-bold"
+                      : "bg-transparent text-zinc-500 border-transparent hover:text-[#0a0a0a]"
+                  }`}
                 >
-                  <FileCode2 size={11} style={{ color: activeFile === i ? "#8b5cf6" : "#c4c0b8" }} />
-                  {f?.name}
+                  <FileCode2
+                    size={12}
+                    className={activeFile === i ? "text-[#7c3aed]" : "text-zinc-400"}
+                  />
+                  <span>{f?.name}</span>
                 </button>
               ))}
             </div>
@@ -262,25 +279,24 @@ function Artifact() {
 
           {/* Preview Controls Bar */}
           {tab === "preview" && isWebProject && (
-            <div className="flex items-center justify-between px-3.5 py-1.5 shrink-0"
-              style={{ background: "#faf8ff", borderBottom: "1px solid #ede9fe" }}>
-              <span className="text-[11px] font-medium flex items-center gap-1.5" style={{ color: "#7c3aed" }}>
-                <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "#10b981" }} />
+            <div className="flex items-center justify-between px-3.5 py-2 shrink-0 bg-purple-500/[0.04] border-b border-purple-500/10">
+              <span className="text-[11px] font-semibold flex items-center gap-2 text-purple-700">
+                <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse" />
                 Live Interactive Sandbox
               </span>
               <button
-                onClick={() => setRefreshKey(k => k + 1)}
-                className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded cursor-pointer border-none"
-                style={{ background: "#ede9fe", color: "#7c3aed" }}
+                onClick={() => setRefreshKey((k) => k + 1)}
+                className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-md cursor-pointer border border-purple-500/20 bg-white text-[#7c3aed] hover:bg-purple-50 shadow-sm transition-all"
                 title="Rerun sandbox"
               >
-                <RotateCw size={10} /> Reload
+                <RotateCw size={10} />
+                <span>Reload</span>
               </button>
             </div>
           )}
 
           {/* Body Content */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden bg-white">
             {tab === "preview" && isWebProject ? (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full bg-white">
                 <iframe
@@ -306,7 +322,7 @@ function Artifact() {
                     automaticLayout: true,
                     scrollBeyondLastLine: false,
                     padding: { top: 16, bottom: 16 },
-                    lineNumbers: "on"
+                    lineNumbers: "on",
                   }}
                 />
               </motion.div>
@@ -315,15 +331,13 @@ function Artifact() {
         </div>
       ) : (
         /* Collapsed strip */
-        <div className="flex flex-col items-center w-12 py-4 gap-3 h-full"
-          style={{ background: "#f9f8f6", borderLeft: "1px solid #e8e6e1" }}>
+        <div className="flex flex-col items-center w-12 py-4 gap-3 h-full bg-[#fafafa] border-l border-black/10">
           <button
             onClick={() => setCollapsed(false)}
-            title="Expand Artifacts"
-            className="flex items-center justify-center w-8 h-8 rounded-xl cursor-pointer border-none transition-all"
-            style={{ background: "#f3f0ff", color: "#8b5cf6" }}
+            title="Expand Artifacts Panel"
+            className="flex items-center justify-center w-8 h-8 rounded-xl cursor-pointer border border-purple-500/20 transition-all bg-purple-500/10 text-[#7c3aed] hover:bg-purple-500/20 shadow-sm"
           >
-            <Code2 size={15} />
+            <Code2 size={16} />
           </button>
         </div>
       )}

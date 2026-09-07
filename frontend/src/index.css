@@ -1,35 +1,94 @@
 @import "tailwindcss";
 
+@theme {
+  --color-canvas: #fafafa;
+  --color-obsidian: #0a0a0a;
+  --color-dark-base: #0e0e12;
+  --color-dark-surface: #16161a;
+  --color-brand-purple: #7c3aed;
+  --color-brand-emerald: #10b981;
+  --color-brand-gold: #eab308;
+  --color-tech-indigo: #6366f1;
+}
+
+:root {
+  /* Canvas & Text */
+  --bg-main: #fafafa;
+  --bg-surface: #ffffff;
+  --text-primary: #0a0a0a;
+  --text-muted: #71717a;
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  /* Dark Bento / Inverted Canvas */
+  --bg-dark-base: #0e0e12;
+  --bg-dark-surface: #16161a;
+  --border-dark: rgba(255, 255, 255, 0.1);
+  /* Brand Accents */
+  --accent-purple: #7c3aed;
+  --accent-emerald: #10b981;
+  --accent-gold: #eab308;
+}
+
+/* MindSkill Glassmorphic Utility Classes */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.glass-panel-dark {
+  background: rgba(14, 14, 18, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* MindSkill Neon Glow Accents */
+.glow-purple {
+  box-shadow: 0 0 30px -5px rgba(124, 58, 237, 0.25);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 30px -5px rgba(16, 185, 129, 0.25);
+}
+
+.glow-gold {
+  box-shadow: 0 0 30px -5px rgba(234, 179, 8, 0.25);
+}
+
 @layer base {
   body {
     font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #f9f8f6;
-    color: #1a1918;
+    background-color: #fafafa;
+    color: #0a0a0a;
     -webkit-font-smoothing: antialiased;
   }
   code, pre, kbd { font-family: "JetBrains Mono", monospace; }
 }
 
-::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #d4d0c8; border-radius: 999px; }
+::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.12); border-radius: 999px; }
+.dark ::-webkit-scrollbar-thumb, .glass-panel-dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
 
 @keyframes logo-shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
 .logo-text {
-  background: linear-gradient(90deg, #8b5cf6, #a78bfa, #8b5cf6);
+  background: linear-gradient(90deg, #7c3aed, #a855f7, #6366f1, #7c3aed);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: logo-shimmer 3s linear infinite;
+  animation: logo-shimmer 4s linear infinite;
 }
 
 @keyframes logo-float {
   0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-5px) rotate(4deg); }
+  50% { transform: translateY(-4px) rotate(3deg); }
 }
 .logo-float { animation: logo-float 3.5s ease-in-out infinite; }
 

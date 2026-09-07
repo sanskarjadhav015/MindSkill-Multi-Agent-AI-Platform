@@ -125,7 +125,7 @@ export const imageAnalyzer = async (state) => {
         // 4. Multimodal Message Assembly
         const messages = [
             new SystemMessage(
-                `You are Novamind image analyzer Agent.
+                `You are MindSkill image analyzer Agent.
 Rules:
 - Analyze only the uploaded image.
 - Answer the user's question accurately.

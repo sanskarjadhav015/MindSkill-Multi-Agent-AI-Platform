@@ -23,16 +23,18 @@ function ChatArea() {
     const convId = selectedConversation?._id || null;
     dispatch(setActiveConversationId(convId));
 
-    const getMesg = async () => {
-      // Clear previous messages and artifacts immediately to prevent UI flashes
+    if (!selectedConversation) {
       dispatch(setMessages([]));
       dispatch(setArtifacts([]));
+      return;
+    }
 
-      if (!selectedConversation) return;
+    // If it's a newly created "New Chat", keep whatever messages were just sent
+    if (selectedConversation.title === "New Chat") {
+      return;
+    }
 
-      // "New Chat" has no messages yet
-      if (selectedConversation.title === "New Chat") return;
-
+    const getMesg = async () => {
       const data = await getMessages(selectedConversation._id);
       if (!Array.isArray(data)) return;
 
@@ -50,7 +52,7 @@ function ChatArea() {
   }, [selectedConversation?._id]);
 
   return (
-    <div className='flex-1 flex flex-col min-w-0' style={{ background: "#f9f8f6" }}>
+    <div className="flex-1 flex flex-col min-w-0 bg-[#fafafa]">
       <Nav />
       <MessageList />
       <Chatinput />

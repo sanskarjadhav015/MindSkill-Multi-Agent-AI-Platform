@@ -1,4 +1,4 @@
-# 🌟 NovaMind: Distributed Multi-Agent AI Operating Platform
+# 🌟 MindSkill: Distributed Multi-Agent AI Operating Platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-v20+-green.svg)](https://nodejs.org/)
@@ -7,7 +7,7 @@
 [![Redis](https://img.shields.io/badge/Cache-Redis-red.svg)](https://redis.io/)
 [![Qdrant](https://img.shields.io/badge/VectorDB-Qdrant-purple.svg)](https://qdrant.tech/)
 
-> **NovaMind** is an enterprise-grade, distributed Multi-Agent AI platform designed to automate complex developer and workplace workflows—including universal multi-stack code synthesis with a multi-runtime live interactive in-browser sandbox (Iframe, Sandpack React, Node.js WebContainers, and Piston Sandboxed Terminal), document Retrieval-Augmented Generation (RAG) over vector databases, high-precision document & slide synthesis (PDF/PPTX), computer vision OCR & image analysis, and real-time live web research.
+> **MindSkill** is an enterprise-grade, distributed Multi-Agent AI platform designed to automate complex developer and workplace workflows—including universal multi-stack code synthesis with a multi-runtime live interactive in-browser sandbox (Iframe, Sandpack React, Node.js WebContainers, and Piston Sandboxed Terminal), document Retrieval-Augmented Generation (RAG) over vector databases, high-precision document & slide synthesis (PDF/PPTX), computer vision OCR & image analysis, and real-time live web research.
 
 ---
 
@@ -38,7 +38,7 @@
 
 ## 🖥️ Multi-Runtime Preview System
 
-NovaMind automatically determines the exact runtime needed for any generated codebase and boots the corresponding in-browser engine:
+MindSkill automatically determines the exact runtime needed for any generated codebase and boots the corresponding in-browser engine:
 
 | Language / Stack | Runtime Engine | Description |
 |---|---|---|
@@ -139,7 +139,7 @@ NovaMind automatically determines the exact runtime needed for any generated cod
 
 ```bash
 # 1. Start Redis
-docker run -d -p 6379:6379 --name novamind-redis redis:alpine
+docker run -d -p 6379:6379 --name mindskill-redis redis:alpine
 
 # 2. Run Microservices
 cd NovaMind/backend/services/auth && node index.js     # Port 8001

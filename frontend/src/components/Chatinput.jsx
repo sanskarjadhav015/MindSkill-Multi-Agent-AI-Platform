@@ -1,4 +1,18 @@
-import { Code2, File, FileText, FileTextIcon, Globe, ImageIcon, MessagesSquare, Mic, Paperclip, Presentation, Send, X, ZapIcon } from "lucide-react";
+import {
+  Code2,
+  File,
+  FileTextIcon,
+  Globe,
+  ImageIcon,
+  MessagesSquare,
+  Mic,
+  Paperclip,
+  Presentation,
+  Send,
+  Sparkles,
+  X,
+  ZapIcon,
+} from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import sendMessage from "../features/sendMessage";
 import { useDispatch, useSelector, useStore } from "react-redux";
@@ -26,17 +40,30 @@ function Chatinput() {
 
   const toggleMic = () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) { alert("Speech recognition not supported."); return; }
-    if (listening) { recRef.current?.stop(); setListening(false); return; }
+    if (!SR) {
+      alert("Speech recognition is not supported in this browser.");
+      return;
+    }
+    if (listening) {
+      recRef.current?.stop();
+      setListening(false);
+      return;
+    }
     try {
       const r = new SR();
-      r.lang = "en-US"; r.continuous = false; r.interimResults = false;
+      r.lang = "en-US";
+      r.continuous = false;
+      r.interimResults = false;
       r.onstart = () => setListening(true);
-      r.onresult = (e) => setValue((p) => p ? p + " " + e.results[0][0].transcript : e.results[0][0].transcript);
+      r.onresult = (e) =>
+        setValue((p) => (p ? p + " " + e.results[0][0].transcript : e.results[0][0].transcript));
       r.onerror = () => setListening(false);
       r.onend = () => setListening(false);
-      recRef.current = r; r.start();
-    } catch { setListening(false); }
+      recRef.current = r;
+      r.start();
+    } catch {
+      setListening(false);
+    }
   };
 
   const handleSend = async () => {
@@ -64,32 +91,62 @@ function Chatinput() {
     fd.append("agent", selectedAgent);
     if (selectedFile) fd.append("file", selectedFile);
 
-    const userContent = value.trim() || (selectedFile ? "[Uploaded: " + selectedFile.name + "]" : "");
-    dispatch(addMessage({ role: "user", content: userContent }));
+    // Prepare user message display
+    const promptText = value.trim();
+    let displayContent = promptText;
+    let localImages = [];
+
+    if (selectedFile) {
+      if (selectedFile.type.startsWith("image/")) {
+        const localImgUrl = URL.createObjectURL(selectedFile);
+        localImages.push(localImgUrl);
+        displayContent = promptText ? `${promptText}\n\n*[Attached Image: ${selectedFile.name}]*` : `*[Attached Image: ${selectedFile.name}]*`;
+      } else {
+        displayContent = promptText ? `${promptText}\n\n📄 **Attached Document:** \`${selectedFile.name}\`` : `📄 **Attached Document:** \`${selectedFile.name}\``;
+      }
+    }
+
+    dispatch(addMessage({
+      role: "user",
+      content: displayContent,
+      images: localImages
+    }));
 
     setValue("");
     setSelectedFile(null);
+    if (fileRef.current) fileRef.current.value = "";
     setLoading(true);
     dispatch(setIsLoading({ isLoading: true, conversationId: targetConvId }));
 
     try {
       const data = await sendMessage(fd);
-      
+
       // Check if user is still on the conversation where message was sent
       const currentSelected = store.getState().conversation.selectedConversation;
-      const isStillOnSameConv = currentSelected?._id === targetConvId;
+      const isStillOnSameConv = !currentSelected || currentSelected?._id === targetConvId;
 
-      if (isStillOnSameConv && data) {
-        if (data.artifacts && data.artifacts.length > 0) {
-          dispatch(setArtifacts(data.artifacts));
+      if (isStillOnSameConv) {
+        if (data && data.answer) {
+          if (data.artifacts && data.artifacts.length > 0) {
+            dispatch(setArtifacts(data.artifacts));
+          }
+          dispatch(addMessage({ role: "assistant", content: data.answer, images: data.images }));
+        } else {
+          dispatch(addMessage({
+            role: "assistant",
+            content: "⚠️ Failed to receive response from MindSkill. Please check if your file is valid and try again."
+          }));
         }
-        dispatch(addMessage({ role: "assistant", content: data.answer, images: data.images }));
       }
 
       const up = await getCurrentUser();
       if (up) dispatch(setUserdata(up));
     } catch (err) {
       console.error("[ChatInput] Send error:", err);
+      dispatch(addMessage({
+        role: "assistant",
+        content: `⚠️ An error occurred while processing: ${err?.message || "Network Error"}. Please try again.`
+      }));
     } finally {
       setLoading(false);
       dispatch(setIsLoading({ isLoading: false, conversationId: null }));
@@ -97,61 +154,89 @@ function Chatinput() {
   };
 
   const agents = [
-    { id: "auto",    icon: ZapIcon,        label: "Auto" },
-    { id: "chat",    icon: MessagesSquare, label: "Chat" },
-    { id: "coding",  icon: Code2,          label: "Code" },
-    { id: "pdf",     icon: FileText,       label: "PDF" },
-    { id: "ppt",     icon: Presentation,   label: "PPT" },
-    { id: "vision",  icon: ImageIcon,      label: "Vision" },
-    { id: "search",  icon: Globe,          label: "Search" },
+    { id: "auto",   icon: ZapIcon,        label: "Auto Router" },
+    { id: "chat",   icon: MessagesSquare, label: "Chat" },
+    { id: "coding", icon: Code2,          label: "Coding" },
+    { id: "pdf",    icon: FileTextIcon,   label: "PDF Vector" },
+    { id: "ppt",    icon: Presentation,   label: "Slide Deck" },
+    { id: "vision", icon: ImageIcon,      label: "Vision AI" },
+    { id: "search", icon: Globe,          label: "Web Search" },
   ];
 
-  const hasContent = value.trim() || selectedFile;
+  const hasContent = Boolean(value.trim() || selectedFile);
 
   return (
-    <div className="px-4 md:px-6 pb-5 pt-2 shrink-0" style={{ background: "#f9f8f6" }}>
+    <div className="px-4 md:px-6 pb-5 pt-2 shrink-0 bg-[#fafafa]">
       <div className="max-w-3xl mx-auto">
-        <div className="rounded-2xl p-3 transition-all"
-          style={{ background: "#fff", border: "1.5px solid #e8e6e1", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
-
-          {/* Agent pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 px-0.5" style={{ scrollbarWidth: "none" }}>
+        {/* Main Input Bento Box */}
+        <div
+          className="rounded-2xl p-3 transition-all bg-white text-[#0a0a0a] border border-black/10 shadow-sm focus-within:border-purple-500/50 focus-within:shadow-[0_0_25px_-5px_rgba(124,58,237,0.15)]"
+        >
+          {/* Agent selection pills */}
+          <div
+            className="flex items-center gap-1.5 overflow-x-auto pb-1.5 px-0.5 [scrollbar-width:none]"
+          >
             {agents.map(({ id, icon: Icon, label }) => {
               const active = selectedAgent === id;
               return (
-                <button key={id} type="button" onClick={() => setSelectedAgent(id)}
-                  className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-semibold cursor-pointer border-none transition-all"
-                  style={active
-                    ? { background: "#8b5cf6", color: "#fff" }
-                    : { background: "#f3f2ef", color: "#6b6560" }
-                  }>
-                  <Icon size={11} />
-                  {label}
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setSelectedAgent(id)}
+                  className={`flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11.5px] font-semibold cursor-pointer border-none transition-all ${
+                    active
+                      ? "bg-[#7c3aed] text-white shadow-sm shadow-purple-500/25"
+                      : "bg-black/[0.04] hover:bg-black/[0.07] text-zinc-600 hover:text-[#0a0a0a]"
+                  }`}
+                >
+                  <Icon size={12} className={active ? "text-white" : "text-zinc-500"} />
+                  <span>{label}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* File preview */}
+          {/* File Attachment Chip */}
           <AnimatePresence>
             {selectedFile && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-                className="mt-2 mx-0.5">
-                <div className="inline-flex items-center gap-2.5 px-3 py-2 rounded-xl"
-                  style={{ background: "#f3f2ef", border: "1px solid #e8e6e1" }}>
-                  {selectedFile.type === "application/pdf"
-                    ? <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: "#fef2f2" }}><FileTextIcon size={13} style={{ color: "#dc2626" }} /></div>
-                    : selectedFile.type.startsWith("image/")
-                    ? <img src={URL.createObjectURL(selectedFile)} alt="preview" className="h-7 w-7 rounded-lg object-cover" />
-                    : <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: "#f3f0ff" }}><File size={13} style={{ color: "#8b5cf6" }} /></div>
-                  }
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-2 mx-0.5"
+              >
+                <div className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-black/[0.03] border border-black/10">
+                  {selectedFile.type === "application/pdf" ? (
+                    <div className="w-6 h-6 rounded-lg flex items-center justify-center bg-rose-500/10 text-rose-600">
+                      <FileTextIcon size={13} />
+                    </div>
+                  ) : selectedFile.type.startsWith("image/") ? (
+                    <img
+                      src={URL.createObjectURL(selectedFile)}
+                      alt="preview"
+                      className="h-6 w-6 rounded-lg object-cover border border-black/10"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded-lg flex items-center justify-center bg-purple-500/10 text-[#7c3aed]">
+                      <File size={13} />
+                    </div>
+                  )}
                   <div className="min-w-0">
-                    <p className="text-[12px] font-semibold truncate max-w-[180px]" style={{ color: "#1a1918" }}>{selectedFile.name}</p>
-                    <p className="text-[10.5px]" style={{ color: "#9c9590" }}>{Math.ceil(selectedFile.size / 1024)} KB</p>
+                    <p className="text-[12px] font-semibold truncate max-w-[200px] text-[#0a0a0a]">
+                      {selectedFile.name}
+                    </p>
+                    <p className="text-[10px] text-zinc-400">
+                      {Math.ceil(selectedFile.size / 1024)} KB
+                    </p>
                   </div>
-                  <button type="button" onClick={() => { setSelectedFile(null); if (fileRef.current) fileRef.current.value = ""; }}
-                    className="w-5 h-5 rounded-full flex items-center justify-center cursor-pointer border-none transition-all"
-                    style={{ background: "#e8e6e1", color: "#6b6560" }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedFile(null);
+                      if (fileRef.current) fileRef.current.value = "";
+                    }}
+                    className="w-5 h-5 rounded-full flex items-center justify-center cursor-pointer border-none bg-black/[0.06] hover:bg-black/[0.1] text-zinc-600 transition-colors"
+                  >
                     <X size={11} />
                   </button>
                 </div>
@@ -159,54 +244,95 @@ function Chatinput() {
             )}
           </AnimatePresence>
 
-          {/* Textarea */}
+          {/* Text Input Area */}
           <textarea
             rows={2}
-            placeholder={loading ? "Generating response..." : "Message NovaMind..."}
+            placeholder={
+              loading
+                ? "Agent is reasoning & generating..."
+                : "Ask MindSkill, create code, generate images, or attach PDFs..."
+            }
             onChange={(e) => setValue(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); if (hasContent && !loading) handleSend(); } }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                if (hasContent && !loading) handleSend();
+              }
+            }}
             value={value}
             disabled={loading}
-            className="w-full resize-none bg-transparent px-1 pt-2 text-[14px] leading-relaxed placeholder:text-gray-400 disabled:opacity-50"
-            style={{ color: "#1a1918", fontFamily: "inherit" }}
+            className="w-full resize-none bg-transparent px-1 pt-2.5 text-[14px] leading-relaxed placeholder:text-zinc-400 disabled:opacity-50 text-[#0a0a0a]"
+            style={{ outline: "none" }}
           />
 
-          {/* Controls */}
-          <div className="flex items-center justify-between px-0.5 pt-1">
+          {/* Controls Bar */}
+          <div className="flex items-center justify-between px-0.5 pt-1.5 border-t border-black/[0.04]">
             <div className="flex items-center gap-1">
-              <input type="file" accept=".pdf,image/*" className="hidden" ref={fileRef}
-                onChange={(e) => { const f = e.target.files?.[0]; if (f) setSelectedFile(f); }} />
-              <button type="button" title="Attach file" onClick={() => { if (fileRef.current) { fileRef.current.value = ""; fileRef.current.click(); } }}
-                className="flex items-center justify-center w-8 h-8 rounded-xl cursor-pointer border-none transition-all"
-                style={{ background: "transparent", color: "#9c9590" }}>
+              <input
+                type="file"
+                accept=".pdf,image/*"
+                className="hidden"
+                ref={fileRef}
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) setSelectedFile(f);
+                }}
+              />
+              <button
+                type="button"
+                title="Attach Document or Image"
+                onClick={() => {
+                  if (fileRef.current) {
+                    fileRef.current.value = "";
+                    fileRef.current.click();
+                  }
+                }}
+                className="flex items-center justify-center w-8 h-8 rounded-xl cursor-pointer border-none transition-all bg-transparent hover:bg-black/[0.04] text-zinc-500 hover:text-[#0a0a0a]"
+              >
                 <Paperclip size={15} />
               </button>
-              <button type="button" onClick={toggleMic} title={listening ? "Stop" : "Mic"}
-                className="flex items-center justify-center w-8 h-8 rounded-xl cursor-pointer border-none transition-all"
-                style={{ background: listening ? "#fef2f2" : "transparent", color: listening ? "#dc2626" : "#9c9590" }}>
+
+              <button
+                type="button"
+                onClick={toggleMic}
+                title={listening ? "Stop recording" : "Voice input"}
+                className={`flex items-center justify-center w-8 h-8 rounded-xl cursor-pointer border-none transition-all ${
+                  listening
+                    ? "bg-rose-500/10 text-rose-600 animate-pulse"
+                    : "bg-transparent hover:bg-black/[0.04] text-zinc-500 hover:text-[#0a0a0a]"
+                }`}
+              >
                 <Mic size={15} />
               </button>
             </div>
 
+            {/* High-Impact CTA Button */}
             <motion.button
               type="button"
               disabled={!hasContent || loading}
               onClick={handleSend}
-              whileHover={hasContent && !loading ? { scale: 1.06 } : {}}
-              whileTap={hasContent && !loading ? { scale: 0.94 } : {}}
-              className="flex items-center justify-center w-8 h-8 rounded-xl border-none cursor-pointer transition-all"
-              style={hasContent && !loading
-                ? { background: "#8b5cf6", color: "#fff" }
-                : { background: "#f3f2ef", color: "#c4c0b8", cursor: "not-allowed" }
-              }>
-              {loading
-                ? <div className="w-3.5 h-3.5 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: "#c4b5fd", borderTopColor: "transparent" }} />
-                : <Send size={14} />}
+              whileHover={hasContent && !loading ? { scale: 1.04 } : {}}
+              whileTap={hasContent && !loading ? { scale: 0.96 } : {}}
+              className={`flex items-center justify-center gap-1.5 h-8 px-3 rounded-xl border-none cursor-pointer transition-all text-xs font-bold ${
+                hasContent && !loading
+                  ? "bg-[#000000] text-white hover:bg-[#1a1a1a] shadow-sm"
+                  : "bg-black/[0.05] text-zinc-400 cursor-not-allowed"
+              }`}
+            >
+              {loading ? (
+                <div className="w-3.5 h-3.5 border-2 border-zinc-400 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Send size={13} />
+                  <span className="hidden sm:inline">Send</span>
+                </>
+              )}
             </motion.button>
           </div>
         </div>
-        <p className="text-center text-[11px] mt-2" style={{ color: "#c4c0b8" }}>
-          NovaMind can make mistakes. Please verify important information.
+
+        <p className="text-center text-[11px] mt-2.5 text-zinc-400">
+          MindSkill Multi-Agent Engine · Verify generated code & answers
         </p>
       </div>
     </div>

@@ -2,8 +2,10 @@ import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import MessageBubble from "./messagebubble";
 import LoadingAnimation from "./LoadingAnimation";
-import { Code2, FileText, Globe, Sparkles, Zap, Brain, ImageIcon, Presentation } from "lucide-react";
+import { Code2, FileText, Globe, Sparkles, ImageIcon, Presentation, Bot, ArrowUpRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+
+import { LogoIcon } from "./Logo";
 
 function MessageList() {
   const { messages, isLoading, loadingConversationId } = useSelector((s) => s.message);
@@ -18,61 +20,134 @@ function MessageList() {
   }, [messages, shouldShowLoading]);
 
   const cards = [
-    { icon: Code2,       tag: "Coding",   title: "Web Projects",          desc: "Generate full HTML/CSS/JS apps with live preview" },
-    { icon: ImageIcon,   tag: "Vision",   title: "Image Generation",      desc: "Create images from text prompts" },
-    { icon: FileText,    tag: "PDF/RAG",  title: "Document Intelligence", desc: "Analyze and query PDFs with vector search" },
-    { icon: Globe,       tag: "Search",   title: "Web Research",          desc: "Synthesize real-time data from the web" },
-    { icon: Brain,       tag: "Chat",     title: "Conversation",          desc: "Multi-turn intelligent dialogue" },
-    { icon: Presentation,tag: "PPT",      title: "Presentations",         desc: "Auto-generate slide decks" },
+    {
+      icon: Code2,
+      tag: "Coding",
+      color: "#7c3aed",
+      bgSoft: "bg-purple-500/10",
+      borderSoft: "border-purple-500/20",
+      title: "Interactive Web Apps",
+      desc: "Full HTML/CSS/JS applications with live sandbox preview"
+    },
+    {
+      icon: ImageIcon,
+      tag: "Vision",
+      color: "#6366f1",
+      bgSoft: "bg-indigo-500/10",
+      borderSoft: "border-indigo-500/20",
+      title: "Generative Vision",
+      desc: "High fidelity AI images and diagrams generated on demand"
+    },
+    {
+      icon: FileText,
+      tag: "PDF / RAG",
+      color: "#10b981",
+      bgSoft: "bg-emerald-500/10",
+      borderSoft: "border-emerald-500/20",
+      title: "Document Intelligence",
+      desc: "Deep semantic vector search and extraction across documents"
+    },
+    {
+      icon: Globe,
+      tag: "Search",
+      color: "#3b82f6",
+      bgSoft: "bg-blue-500/10",
+      borderSoft: "border-blue-500/20",
+      title: "Real-time Research",
+      desc: "Synthesize fresh data and citations live from the web"
+    },
+    {
+      icon: Bot,
+      tag: "Multi-Agent",
+      color: "#7c3aed",
+      bgSoft: "bg-purple-500/10",
+      borderSoft: "border-purple-500/20",
+      title: "Autonomous Dialogue",
+      desc: "Multi-turn context reasoning with automatic tool routing"
+    },
+    {
+      icon: Presentation,
+      tag: "Slides",
+      color: "#eab308",
+      bgSoft: "bg-amber-500/10",
+      borderSoft: "border-amber-500/20",
+      title: "Decks & Reports",
+      desc: "Auto-structured pitch presentations and structured briefings"
+    },
   ];
 
   return (
-    <div className="flex-1 h-full overflow-y-auto px-4 md:px-6 py-6">
+    <div className="flex-1 h-full overflow-y-auto px-4 md:px-6 py-6 [scrollbar-width:thin]">
       {(!messages || messages.length === 0) && !shouldShowLoading ? (
-        <div className="h-full max-w-2xl mx-auto flex flex-col items-center justify-center text-center px-4">
+        <div className="h-full max-w-3xl mx-auto flex flex-col items-center justify-center text-center px-4">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="flex flex-col items-center gap-5 w-full"
+            className="flex flex-col items-center gap-6 w-full"
           >
-            {/* Logo */}
+            {/* AI Highlight Badge */}
+            <div className="inline-flex items-center gap-2 bg-purple-500/10 text-purple-600 border border-purple-500/20 px-3 py-1 rounded-full text-xs font-semibold tracking-wide shadow-sm">
+              <Sparkles size={13} className="text-[#7c3aed]" />
+              MindSkill Multi-Agent Orchestrator
+            </div>
+
+            {/* Logo & Headline */}
             <div className="flex flex-col items-center gap-3">
-              <motion.div
-                className="logo-float w-14 h-14 rounded-2xl flex items-center justify-center"
-                style={{ background: "#8b5cf6", boxShadow: "0 8px 24px rgba(139,92,246,0.25)" }}
-              >
-                <Sparkles size={26} color="white" />
+              <motion.div className="logo-float">
+                <LogoIcon size={56} className="shadow-xl rounded-2xl" />
               </motion.div>
               <div>
-                <h1 className="text-2xl font-bold logo-text">NovaMind</h1>
-                <p className="text-sm mt-1" style={{ color: "#9c9590" }}>What do you want to build today?</p>
+                <div className="flex items-baseline justify-center">
+                  <h1 className="text-3xl font-extrabold tracking-tight text-[#0a0a0a]">
+                    MindSkill
+                  </h1>
+                  <span className="text-3xl font-extrabold text-[#7C3AED] ml-1">AI</span>
+                </div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-zinc-400 mt-0.5">
+                  STUDIO
+                </p>
+                <p className="text-sm mt-2 text-zinc-500 max-w-md mx-auto">
+                  What would you like to build, generate, or research today?
+                </p>
               </div>
             </div>
 
-            {/* Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full mt-2 text-left">
+            {/* Bento Grid: Clean Light Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full mt-2 text-left">
               {cards.map((c, i) => {
                 const Icon = c.icon;
                 return (
                   <motion.div
                     key={i}
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.05 * i }}
-                    className="p-4 rounded-xl cursor-default transition-all"
-                    style={{ background: "#fff", border: "1px solid #e8e6e1" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#c4b5fd"; e.currentTarget.style.background = "#faf9ff"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#e8e6e1"; e.currentTarget.style.background = "#fff"; }}
+                    transition={{ delay: 0.04 * i }}
+                    whileHover={{ y: -2 }}
+                    className="p-4 rounded-2xl cursor-default transition-all bg-white text-[#0a0a0a] border border-black/10 shadow-sm hover:shadow-md hover:border-purple-500/30 group relative"
                   >
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: "#f3f0ff" }}>
-                        <Icon size={12} style={{ color: "#8b5cf6" }} />
+                    <div className="flex items-center justify-between mb-2">
+                      <div
+                        className={`w-7 h-7 rounded-xl flex items-center justify-center ${c.bgSoft} border ${c.borderSoft}`}
+                      >
+                        <Icon size={14} style={{ color: c.color }} />
                       </div>
-                      <span className="text-[10.5px] font-semibold uppercase tracking-wide" style={{ color: "#8b5cf6" }}>{c.tag}</span>
+                      <span
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${c.bgSoft} border ${c.borderSoft}`}
+                        style={{ color: c.color }}
+                      >
+                        {c.tag}
+                      </span>
                     </div>
-                    <p className="text-[13px] font-semibold" style={{ color: "#1a1918" }}>{c.title}</p>
-                    <p className="text-[11.5px] mt-0.5 leading-snug" style={{ color: "#9c9590" }}>{c.desc}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-[13.5px] font-bold text-[#0a0a0a] group-hover:text-purple-700 transition-colors">
+                        {c.title}
+                      </p>
+                      <ArrowUpRight size={13} className="text-zinc-300 group-hover:text-purple-600 transition-colors" />
+                    </div>
+                    <p className="text-[11.5px] mt-1 text-zinc-500 leading-relaxed">
+                      {c.desc}
+                    </p>
                   </motion.div>
                 );
               })}

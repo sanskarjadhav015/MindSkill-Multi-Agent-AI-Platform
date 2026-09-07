@@ -98,7 +98,7 @@ Answer the user using the above search results when relevant.
 
         // 5. System Instructions & Formatting Guidelines
         const systemPrompt = `
-You are NovaMind, an intelligent assistant.
+You are MindSkill, an intelligent assistant.
 
 ${searchContext}
 

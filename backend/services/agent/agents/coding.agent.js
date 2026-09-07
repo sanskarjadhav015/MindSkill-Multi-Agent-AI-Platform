@@ -118,7 +118,7 @@ export const extractProjectFiles = (raw = "", userPrompt = "") => {
 };
 
 const generateFallbackFiles = (userPrompt) => {
-    const title = userPrompt || "NovaMind Interactive Web App";
+    const title = userPrompt || "MindSkill Interactive Web App";
     return [
         {
             name: "index.html",
@@ -259,7 +259,7 @@ User Request: ${state.prompt}
 
         // 3. Multi-File Project Generation Branch
         if (isProjectRequest) {
-            const projectPrompt = `You are NovaMind Elite Coding Agent, a world-class principal frontend engineer and UI/UX designer.
+            const projectPrompt = `You are MindSkill Elite Coding Agent, a world-class principal frontend engineer and UI/UX designer.
 
 Build a complete, modern, beautiful, and fully interactive web application based on the user's prompt.
 

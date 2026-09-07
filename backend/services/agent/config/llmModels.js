@@ -27,7 +27,7 @@ import { ChatOpenRouter } from "@langchain/openrouter";
  * ============================================================================
  */
 
-const DEFAULT_TIMEOUT_MS = Number(process.env.LLM_REQUEST_TIMEOUT_MS) || 30_000;
+const DEFAULT_TIMEOUT_MS = Number(process.env.LLM_REQUEST_TIMEOUT_MS) || 60_000;
 const DEFAULT_MAX_RETRIES = Number(process.env.LLM_MAX_RETRIES) || 1;
 
 // ─── 0. Key Validation Helpers ──────────────────────────────────────────────
@@ -70,7 +70,7 @@ export const createGeminiModel = () => {
     }
     try {
         return new ChatGoogleGenerativeAI({
-            model: "gemini-3.6-flash",
+            model: process.env.GEMINI_MODEL || "gemini-3.5-flash",
             apiKey: process.env.GOOGLE_API_KEY,
             temperature: 0.2,
             maxRetries: DEFAULT_MAX_RETRIES,
@@ -153,8 +153,8 @@ const codingChain = buildFallbackChain([openrouter, gemini, groq], "coding");
 const visionChain = buildFallbackChain([gemini, openrouter], "vision");
 
 // PDF RAG Grounding
-// Gemini 3.6 Flash (Context Grounding) -> Groq -> OpenRouter
-const ragChain = buildFallbackChain([gemini, groq, openrouter], "pdfRag");
+// Gemini 3.5 Flash (Context Grounding) -> OpenRouter -> Groq
+const ragChain = buildFallbackChain([gemini, openrouter, groq], "pdfRag");
 
 // ─── 3. Agent -> Chain Lookup ────────────────────────────────────────────────
 
