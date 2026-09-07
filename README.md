@@ -133,25 +133,6 @@ MindSkill automatically determines the exact runtime needed for any generated co
 
 ---
 
-## 💻 Getting Started & Local Setup
-
-### Quick Start:
-
-```bash
-# 1. Start Redis
-docker run -d -p 6379:6379 --name mindskill-redis redis:alpine
-
-# 2. Run Microservices
-cd NovaMind/backend/services/auth && node index.js     # Port 8001
-cd NovaMind/backend/services/chat && node index.js     # Port 8002
-cd NovaMind/backend/services/billing && node index.js  # Port 8004
-cd NovaMind/backend/services/agent && node index.js    # Port 8003
-cd NovaMind/backend/gateway && node index.js           # Port 8000
-
-# 3. Run Frontend
-cd NovaMind/frontend && npm run dev                    # Port 5173
-```
-
 Visit **[http://localhost:5173](http://localhost:5173)** in your browser.
 
 ---
